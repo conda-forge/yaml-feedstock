@@ -1,4 +1,4 @@
-{% set version = "0.1.6" %}
+{% set version = "0.1.7" %}
 
 package:
   name: yaml
@@ -7,7 +7,7 @@ package:
 source:
   fn: yaml-{{ version }}.tar.gz
   url: http://pyyaml.org/download/libyaml/yaml-{{ version }}.tar.gz
-  md5: 5fe00cda18ca5daeb43762b80c38e06e
+  sha256: 8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729
   patches:
     # Change CMakeLists so that we can build static and shared libraries.
     # See this PR ( https://github.com/yaml/libyaml/pull/10 ) for details.
@@ -15,10 +15,11 @@ source:
 
 build:
   number: 0
+  skip: true  # [win and py35]
   features:
     - vc9                # [win and py27]
     - vc10               # [win and py34]
-    - vc14               # [win and py35]
+    - vc14               # [win and py>=35]
 
 requirements:
   build:
@@ -38,8 +39,7 @@ test:
 
     # Check libraries.
     - test -f "${PREFIX}/lib/libyaml.a"               # [unix]
-    - test -f "${PREFIX}/lib/libyaml.dylib"           # [osx]
-    - test -f "${PREFIX}/lib/libyaml.so"              # [linux]
+    - test -f "${PREFIX}/lib/libyaml${SHLIB_EXT}"     # [unix]
     - if not exist %LIBRARY_LIB%\\yaml_static.lib exit 1     # [win]
     - if not exist %LIBRARY_LIB%\\yaml.lib exit 1     # [win]
     - if not exist %LIBRARY_BIN%\\yaml.dll exit 1     # [win]
