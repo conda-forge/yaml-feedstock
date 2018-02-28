@@ -5,7 +5,6 @@ package:
   version: {{ version }}
 
 source:
-  fn: yaml-{{ version }}.tar.gz
   url: http://pyyaml.org/download/libyaml/yaml-{{ version }}.tar.gz
   sha256: 8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729
   patches:
@@ -23,15 +22,19 @@ build:
 
 requirements:
   build:
-    - cmake              # [win]
     - python             # [win]
+    - cmake              # [win]
     - pkg-config         # [unix]
     - libtool            # [unix]
+    - vc 9  # [win and py27]
+    - vc 10  # [win and py34]
+    - vc 14  # [win and (py35 or py36)]
+  run:
+    - vc 9  # [win and py27]
+    - vc 10  # [win and py34]
+    - vc 14  # [win and (py35 or py36)]
 
 test:
-  requires:
-    - python {{ environ['PY_VER'] + '*' }}            # [win]
-
   commands:
     # Check headers.
     - test -f "${PREFIX}/include/yaml.h"              # [unix]
