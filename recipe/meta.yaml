@@ -25,6 +25,7 @@ requirements:
     - cmake              # [win]
     - pkg-config         # [unix]
     - libtool            # [unix]
+    - make               # [unix]
   host:
   run:
 
