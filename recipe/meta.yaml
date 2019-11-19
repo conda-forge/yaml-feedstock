@@ -1,19 +1,15 @@
-{% set version = "0.1.7" %}
+{% set version = "0.2.1" %}
 
 package:
   name: yaml
   version: {{ version }}
 
 source:
-  url: http://pyyaml.org/download/libyaml/yaml-{{ version }}.tar.gz
-  sha256: 8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729
-  patches:
-    # Change CMakeLists so that we can build static and shared libraries.
-    # See this PR ( https://github.com/yaml/libyaml/pull/10 ) for details.
-    - CMakeLists.txt.patch
+  url: https://github.com/yaml/libyaml/archive/{{ version }}.tar.gz
+  sha256: 1d2aeb87f7d317f1496e4c39410d913840714874a354970300f375eec9303dc4
 
 build:
-  number: 1001
+  number: 0
   run_exports:
     # good recent history, but not much info on how they treat minor ver:
     #   https://abi-laboratory.pro/tracker/timeline/yaml/
@@ -21,25 +17,22 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}
-    - cmake              # [win]
-    - pkg-config         # [unix]
-    - libtool            # [unix]
-    - make               # [unix]
-  host:
-  run:
+    - {{ compiler('cxx') }}              # [not win]
+    - {{ compiler('c') }}                # [not win]
+    - vs2017_win-64                      # [win64]
+    - vs2017_win-32                      # [win32]
+    - cmake
+    - pkg-config
+    - ninja
 
 test:
   commands:
     # Check headers.
-    - test -f "${PREFIX}/include/yaml.h"              # [unix]
+    - test -f "${PREFIX}/include/yaml.h"              # [not win]
     - if not exist "%LIBRARY_INC%\\yaml.h" exit 1     # [win]
 
     # Check libraries.
-    - test -f "${PREFIX}/lib/libyaml.a"               # [unix]
-    - test -f "${PREFIX}/lib/libyaml.dylib"           # [osx]
-    - test -f "${PREFIX}/lib/libyaml.so"              # [linux]
-    - if not exist "%LIBRARY_LIB%\\yaml_static.lib" exit 1  # [win]
+    - test -f "${PREFIX}/lib/libyaml${SHLIB_EXT}"     # [not win]
     - if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1   # [win]
     - if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1   # [win]
 
@@ -61,3 +54,4 @@ extra:
     - pelson
     - mingwandroid
     - ocefpaf
+    - seanyen
