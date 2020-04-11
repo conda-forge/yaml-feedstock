@@ -40,7 +40,7 @@ test:
 about:
   home: http://pyyaml.org/wiki/LibYAML
   license: MIT
-  license_file: LICENSE
+  license_file: License
   summary: A C library for parsing and emitting YAML
   description: |
     YAML is a human friendly data serialization standard for all programming
