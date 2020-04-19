@@ -1,4 +1,4 @@
-{% set version = "0.2.3" %}
+{% set version = "0.2.4" %}
 
 package:
   name: yaml
@@ -6,7 +6,7 @@ package:
 
 source:
   url: https://github.com/yaml/libyaml/archive/{{ version }}.tar.gz
-  sha256: e36ec947f89725e90e062eca39a8a8c88fdce4f83315ab942aa896627236421e
+  sha256: 02265e0229675aea3a413164b43004045617174bdb2c92bf6782f618f8796b55
 
 build:
   number: 0
