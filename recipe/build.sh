@@ -1,9 +1,13 @@
 #!/bin/bash
 
-./bootstrap
-./configure --prefix="${PREFIX}"
-make
-if [[ "${CONDA_BUILD_CROSS_COMPILATION}" != "1" ]]; then
-make check
-fi
-make install
+mkdir build
+cd build
+
+cmake ${CMAKE_ARGS} .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_PREFIX_PATH=$PREFIX \
+      -DCMAKE_INSTALL_PREFIX=$PREFIX \
+      -DCMAKE_INSTALL_LIBDIR=lib
+
+cmake --build . --config $BUILD_TYPE -- -j$CPU_COUNT
+cmake --build . --config $BUILD_TYPE --target install
