@@ -34,6 +34,9 @@ test:
     - if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1   # [win]
     - if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1   # [win]
 
+    # Check cmake scripts
+    - test -f "${PREFIX}/cmake/yamlConfig.cmake"      # [not win]
+
 about:
   home: http://pyyaml.org/wiki/LibYAML
   license: MIT
