@@ -9,5 +9,5 @@ cmake ${CMAKE_ARGS} .. \
       -DCMAKE_INSTALL_PREFIX=$PREFIX \
       -DCMAKE_INSTALL_LIBDIR=lib
 
-cmake --build . --config $BUILD_TYPE -- -j$CPU_COUNT
-cmake --build . --config $BUILD_TYPE --target install
+cmake --build . --config Release -- -j$CPU_COUNT
+cmake --build . --config Release --target install
