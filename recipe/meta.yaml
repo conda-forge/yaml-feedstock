@@ -21,6 +21,7 @@ requirements:
     - cmake
     - pkg-config                         # [win]
     - ninja                              # [win]
+    - make  # [not win]
 
 test:
   commands:
