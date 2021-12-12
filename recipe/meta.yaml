@@ -7,6 +7,8 @@ package:
 source:
   url: https://github.com/yaml/libyaml/archive/{{ version }}.tar.gz
   sha256: fa240dbf262be053f3898006d502d514936c818e422afdcf33921c63bed9bf2e
+  patches:
+    - add-pkg-config.patch
 
 build:
   number: 1
@@ -34,8 +36,9 @@ test:
     - if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1   # [win]
     - if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1   # [win]
 
-    # Check cmake scripts
+    # Check cmake and pkg-config scripts
     - test -f "${PREFIX}/cmake/yamlConfig.cmake"      # [not win]
+    - test -f "${PREFIX}/lib/pkgconfig/yaml-0.1.pc"   # [not win]
 
 about:
   home: http://pyyaml.org/wiki/LibYAML
