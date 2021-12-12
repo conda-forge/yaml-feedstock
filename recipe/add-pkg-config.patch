@@ -1,8 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4f81148..2417a58 100644
+index 4f81148..b2ac055 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -158,3 +158,16 @@ install(
+@@ -65,6 +65,8 @@ set_target_properties(yaml
+   PROPERTIES DEFINE_SYMBOL YAML_DECLARE_EXPORT
+   )
+ 
++set_target_properties(yaml PROPERTIES SOVERSION 2)
++
+ target_compile_definitions(yaml
+   PRIVATE HAVE_CONFIG_H
+   PUBLIC
+@@ -158,3 +160,16 @@ install(
    FILES ${config_version_file}
    DESTINATION ${INSTALL_CMAKE_DIR} COMPONENT Development
    )

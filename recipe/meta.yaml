@@ -23,7 +23,8 @@ requirements:
     - cmake
     - pkg-config                         # [win]
     - ninja                              # [win]
-    - make  # [not win]
+    - make                               # [not win]
+    - patchelf                           # [not win]
 
 test:
   commands:
