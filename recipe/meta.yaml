@@ -24,7 +24,7 @@ requirements:
     - pkg-config                         # [win]
     - ninja                              # [win]
     - make                               # [not win]
-    - patchelf                           # [not win]
+    - patchelf                           # [linux]
 
 test:
   commands:
