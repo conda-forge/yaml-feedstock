@@ -13,4 +13,6 @@ cmake ${CMAKE_ARGS} .. \
 cmake --build . --config Release -- -j$CPU_COUNT
 cmake --build . --config Release --target install
 
-patchelf --set-soname libyaml-0.so.2 $PREFIX/lib/libyaml.so
+if [[ "${build_platform}" == "linux-64" ]]; then
+  patchelf --set-soname libyaml-0.so.2 $PREFIX/lib/libyaml.so
+fi
