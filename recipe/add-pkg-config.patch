@@ -6,7 +6,7 @@ index 4f81148..b2ac055 100644
    PROPERTIES DEFINE_SYMBOL YAML_DECLARE_EXPORT
    )
  
-+set_target_properties(yaml PROPERTIES SOVERSION 2)
++set_target_properties(yaml PROPERTIES SOVERSION ${YAML_VERSION_MAJOR}.${YAML_VERSION_MINOR})
 +
  target_compile_definitions(yaml
    PRIVATE HAVE_CONFIG_H
