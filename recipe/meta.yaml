@@ -34,7 +34,7 @@ test:
 
     # Check libraries.
     - test -f "${PREFIX}/lib/libyaml${SHLIB_EXT}"     # [not win]
-    - test -f "${PREFIX}/lib/libyaml-0.2${SHLIB_EXT}"  # [osx]
+    - test -f "${PREFIX}/lib/libyaml.0.2${SHLIB_EXT}"  # [osx]
     - test -f "${PREFIX}/lib/libyaml-0${SHLIB_EXT}.2"  # [linux]
     - if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1   # [win]
     - if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1   # [win]
