@@ -37,8 +37,7 @@ test:
     - if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1   # [win]
     - if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1   # [win]
 
-    # Check cmake and pkg-config scripts
-    - test -f "${PREFIX}/cmake/yamlConfig.cmake"      # [not win]
+    # Check pkg-config scripts
     - test -f "${PREFIX}/lib/pkgconfig/yaml-0.1.pc"   # [not win]
 
 about:
