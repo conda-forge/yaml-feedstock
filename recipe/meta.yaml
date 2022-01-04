@@ -9,7 +9,7 @@ source:
   sha256: fa240dbf262be053f3898006d502d514936c818e422afdcf33921c63bed9bf2e
 
 build:
-  number: 0
+  number: 2
   run_exports:
     # good recent history, but not much info on how they treat minor ver:
     #   https://abi-laboratory.pro/tracker/timeline/yaml/
@@ -37,6 +37,9 @@ test:
     - if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1   # [win]
     - if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1   # [win]
 
+    # Check cmake and pkg-config scripts
+    - test -f "${PREFIX}/cmake/yamlConfig.cmake"      # [not win]
+    - test -f "${PREFIX}/lib/pkgconfig/yaml-0.1.pc"   # [not win]
 about:
   home: http://pyyaml.org/wiki/LibYAML
   license: MIT
