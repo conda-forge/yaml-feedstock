@@ -20,7 +20,7 @@ requirements:
     - ${{ stdlib('c') }}
     - if: win
       then: 
-        - cmake
+        - cmake <4
         - pkg-config
         - ninja
         - libtool
