@@ -23,6 +23,7 @@ requirements:
         - cmake
         - pkg-config
         - ninja
+        - libtool
       else:
         - automake
         - autoconf
