@@ -17,37 +17,29 @@ build:
 requirements:
   build:
     - ${{ compiler('c') }}
-    - if: not win
-      then: automake
-    - if: not win
-      then: autoconf
-    - if: not win
-      then: make
-    - if: not win
-      then: libtool
     - if: win
-      then: cmake
-    - if: win
-      then: pkg-config
-    - if: win
-      then: ninja
+      then: 
+        - cmake
+        - pkg-config
+        - ninja
+      else:
+        - automake
+        - autoconf
+        - make
+  host:
   run_exports:
     - ${{ pin_subpackage('yaml', upper_bound='x.x') }}
 
 tests:
-  - script:
-      - if: not win
-        then: test -f "${PREFIX}/include/yaml.h"
-      - if: win
-        then: if not exist "%LIBRARY_INC%\\yaml.h" exit 1
-      - if: not win
-        then: test -f "${PREFIX}/lib/libyaml${SHLIB_EXT}"
-      - if: win
-        then: if not exist "%LIBRARY_LIB%\\yaml.lib" exit 1
-      - if: win
-        then: if not exist "%LIBRARY_BIN%\\yaml.dll" exit 1
-      - if: not win
-        then: test -f "${PREFIX}/lib/pkgconfig/yaml-0.1.pc"
+  - package_contents:
+      include: 
+        - yaml.h
+      lib:
+        - yaml
+      files:
+        - if: not win
+          then:
+          - lib/pkgconfig/yaml-0.1.pc
 
 about:
   license: MIT
@@ -68,3 +60,4 @@ extra:
     - mingwandroid
     - ocefpaf
     - seanyen
+    - baszalmstra
