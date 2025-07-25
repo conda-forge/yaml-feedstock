@@ -1,0 +1,64 @@
+schema_version: 1
+
+context:
+  version: 0.2.5
+
+package:
+  name: yaml
+  version: ${{ version }}
+
+source:
+  url: https://github.com/yaml/libyaml/archive/${{ version }}.tar.gz
+  sha256: fa240dbf262be053f3898006d502d514936c818e422afdcf33921c63bed9bf2e
+
+build:
+  number: 3
+
+requirements:
+  build:
+    - ${{ compiler('c') }}
+    - ${{ stdlib('c') }}
+    - if: win
+      then: 
+        - cmake <4
+        - pkg-config
+        - ninja
+      else:
+        - automake
+        - autoconf
+        - make
+        - libtool
+  run_exports:
+    - ${{ pin_subpackage('yaml', upper_bound='x.x') }}
+
+tests:
+  - package_contents:
+      include: 
+        - yaml.h
+      lib:
+        - yaml
+      files:
+        - if: not win
+          then:
+          - lib/pkgconfig/yaml-0.1.pc
+
+about:
+  license: MIT
+  license_file: License
+  summary: A C library for parsing and emitting YAML
+  description: |
+    YAML is a human friendly data serialization standard for all programming
+    languages.
+  homepage: http://pyyaml.org/wiki/LibYAML
+  repository: https://github.com/yaml
+  documentation: http://www.yaml.org/spec/1.2/spec.html
+
+extra:
+  recipe-maintainers:
+    - jakirkham
+    - msarahan
+    - pelson
+    - mingwandroid
+    - ocefpaf
+    - seanyen
+    - baszalmstra

@@ -6,26 +6,31 @@ source .scripts/logging_utils.sh
 
 set -xe
 
-MINIFORGE_HOME=${MINIFORGE_HOME:-${HOME}/miniforge3}
-
-( startgroup "Installing a fresh version of Miniforge" ) 2> /dev/null
-
-MINIFORGE_URL="https://github.com/conda-forge/miniforge/releases/latest/download"
-MINIFORGE_FILE="Mambaforge-MacOSX-$(uname -m).sh"
-curl -L -O "${MINIFORGE_URL}/${MINIFORGE_FILE}"
-rm -rf ${MINIFORGE_HOME}
-bash $MINIFORGE_FILE -b -p ${MINIFORGE_HOME}
-
-( endgroup "Installing a fresh version of Miniforge" ) 2> /dev/null
+MINIFORGE_HOME="${MINIFORGE_HOME:-${HOME}/miniforge3}"
+MINIFORGE_HOME="${MINIFORGE_HOME%/}" # remove trailing slash
+export CONDA_BLD_PATH="${CONDA_BLD_PATH:-${MINIFORGE_HOME}/conda-bld}"
+( startgroup "Provisioning base env with pixi" ) 2> /dev/null
+mkdir -p "${MINIFORGE_HOME}"
+curl -fsSL https://pixi.sh/install.sh | bash
+export PATH="~/.pixi/bin:$PATH"
+arch=$(uname -m)
+if [[ "$arch" == "x86_64" ]]; then
+  arch="64"
+fi
+sed -i.bak "s/platforms = .*/platforms = [\"osx-${arch}\"]/" pixi.toml
+echo "Creating environment"
+pixi install
+pixi list
+echo "Activating environment"
+eval "$(pixi shell-hook)"
+mv pixi.toml.bak pixi.toml
+( endgroup "Provisioning base env with pixi" ) 2> /dev/null
 
 ( startgroup "Configuring conda" ) 2> /dev/null
+export CONDA_SOLVER="libmamba"
+export CONDA_LIBMAMBA_SOLVER_NO_CHANNELS_FROM_INSTALLED=1
 
-source ${MINIFORGE_HOME}/etc/profile.d/conda.sh
-conda activate base
 
-echo -e "\n\nInstalling conda-forge-ci-setup=3 and conda-build."
-mamba install -n base --update-specs --quiet --yes "conda-forge-ci-setup=3" conda-build pip boa
-mamba update -n base --update-specs --quiet --yes "conda-forge-ci-setup=3" conda-build pip boa
 
 
 
@@ -44,6 +49,10 @@ else
   echo -e "\n\nNot mangling homebrew as we are not running in CI"
 fi
 
+if [[ "${sha:-}" == "" ]]; then
+  sha=$(git rev-parse HEAD)
+fi
+
 echo -e "\n\nRunning the build setup script."
 source run_conda_forge_build_setup
 
@@ -51,25 +60,43 @@ source run_conda_forge_build_setup
 
 ( endgroup "Configuring conda" ) 2> /dev/null
 
-
-echo -e "\n\nMaking the build clobber file"
-make_build_number ./ ./recipe ./.ci_support/${CONFIG}.yaml
-
-if [[ "${HOST_PLATFORM}" != "${BUILD_PLATFORM}" ]]; then
-    EXTRA_CB_OPTIONS="${EXTRA_CB_OPTIONS:-} --no-test"
+if [[ -f LICENSE.txt ]]; then
+  cp LICENSE.txt "recipe/recipe-scripts-license.txt"
 fi
 
-conda mambabuild ./recipe -m ./.ci_support/${CONFIG}.yaml --suppress-variables --clobber-file ./.ci_support/clobber_${CONFIG}.yaml ${EXTRA_CB_OPTIONS:-}
-( startgroup "Validating outputs" ) 2> /dev/null
+if [[ "${BUILD_WITH_CONDA_DEBUG:-0}" == 1 ]]; then
+    echo "rattler-build does not currently support debug mode"
+else
 
-validate_recipe_outputs "${FEEDSTOCK_NAME}"
+    if [[ "${HOST_PLATFORM}" != "${BUILD_PLATFORM}" ]]; then
+        EXTRA_CB_OPTIONS="${EXTRA_CB_OPTIONS:-} --test skip"
+    fi
 
-( endgroup "Validating outputs" ) 2> /dev/null
+    rattler-build build --recipe ./recipe \
+        -m ./.ci_support/${CONFIG}.yaml \
+        ${EXTRA_CB_OPTIONS:-} \
+        --target-platform "${HOST_PLATFORM}" \
+        --extra-meta flow_run_id="$flow_run_id" \
+        --extra-meta remote_url="$remote_url" \
+        --extra-meta sha="$sha"
 
-( startgroup "Uploading packages" ) 2> /dev/null
+    ( startgroup "Inspecting artifacts" ) 2> /dev/null
 
-if [[ "${UPLOAD_PACKAGES}" != "False" ]] && [[ "${IS_PR_BUILD}" == "False" ]]; then
-  upload_package --validate --feedstock-name="${FEEDSTOCK_NAME}" ./ ./recipe ./.ci_support/${CONFIG}.yaml
+    # inspect_artifacts was only added in conda-forge-ci-setup 4.9.4
+    command -v inspect_artifacts >/dev/null 2>&1 && inspect_artifacts --recipe-dir ./recipe -m ./.ci_support/${CONFIG}.yaml || echo "inspect_artifacts needs conda-forge-ci-setup >=4.9.4"
+
+    ( endgroup "Inspecting artifacts" ) 2> /dev/null
+    ( startgroup "Validating outputs" ) 2> /dev/null
+
+    validate_recipe_outputs "${FEEDSTOCK_NAME}"
+
+    ( endgroup "Validating outputs" ) 2> /dev/null
+
+    ( startgroup "Uploading packages" ) 2> /dev/null
+
+    if [[ "${UPLOAD_PACKAGES}" != "False" ]] && [[ "${IS_PR_BUILD}" == "False" ]]; then
+      upload_package --validate --feedstock-name="${FEEDSTOCK_NAME}" ./ ./recipe ./.ci_support/${CONFIG}.yaml
+    fi
+
+    ( endgroup "Uploading packages" ) 2> /dev/null
 fi
-
-( endgroup "Uploading packages" ) 2> /dev/null
