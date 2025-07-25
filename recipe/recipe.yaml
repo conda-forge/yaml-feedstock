@@ -28,7 +28,6 @@ requirements:
         - autoconf
         - make
         - libtool
-  host:
   run_exports:
     - ${{ pin_subpackage('yaml', upper_bound='x.x') }}
 
