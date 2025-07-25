@@ -23,11 +23,11 @@ requirements:
         - cmake <4
         - pkg-config
         - ninja
-        - libtool
       else:
         - automake
         - autoconf
         - make
+        - libtool
   host:
   run_exports:
     - ${{ pin_subpackage('yaml', upper_bound='x.x') }}
