@@ -19,7 +19,7 @@ requirements:
     - ${{ compiler('c') }}
     - ${{ stdlib('c') }}
     - if: win
-      then: 
+      then:
         - cmake <4
         - pkg-config
         - ninja
@@ -33,14 +33,14 @@ requirements:
 
 tests:
   - package_contents:
-      include: 
+      include:
         - yaml.h
       lib:
         - yaml
       files:
         - if: not win
           then:
-          - lib/pkgconfig/yaml-0.1.pc
+            - lib/pkgconfig/yaml-0.1.pc
 
 about:
   license: MIT
@@ -62,3 +62,4 @@ extra:
     - ocefpaf
     - seanyen
     - baszalmstra
+    - luhenry
