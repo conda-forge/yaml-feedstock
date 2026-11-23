@@ -21,7 +21,7 @@ requirements:
     - if: win
       then:
         - cmake <4
-        - pkg-config
+        - pkgconf
         - ninja
       else:
         - automake
